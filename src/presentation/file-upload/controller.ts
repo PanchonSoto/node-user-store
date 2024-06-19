@@ -44,7 +44,18 @@ export class FileUploadController {
 
     uploadMultipleFiles = (req: Request, res: Response) => {
 
-        res.json('uploadMultipleFile');
+        const type = req.params.type;
+        const validTypes = ['users','products','categories'];
+        if(!validTypes.includes(type)) {
+            return res.json({error: `Invalid type: ${type}, valid ones: ${validTypes}`});
+        }
+
+
+        const file = req.body.files as UploadedFile[];
+
+        this.fileUploadService.uploadMultiple(file, `uploads/${type}`)
+        .then(uploaded=> res.json(uploaded))
+        .catch(error=>this.handleError(error, res));
 
     }
 
